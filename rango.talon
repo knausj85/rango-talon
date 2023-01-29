@@ -1,10 +1,12 @@
 tag: browser
+and not tag: user.homerow_search
+and not tag: user.fluent_search_screen_search
 -
 settings():
   user.rango_start_with_direct_clicking = 1
 
 # Click
-click <user.rango_target>:
+touch <user.rango_target>:
   user.rango_command_with_target("clickElement", rango_target)
 
 # Open in a new tab
