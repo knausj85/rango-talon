@@ -15,6 +15,11 @@ blank <user.rango_target>:
 stash <user.rango_target>:
   user.rango_command_with_target("openInBackgroundTab", rango_target)
 
+# Navigation
+go root: user.rango_command_without_target("navigateToPageRoot")
+page next: user.rango_command_without_target("navigateToNextPage")
+page last: user.rango_command_without_target("navigateToPreviousPage")
+
 # Move current tab to a new window
 tab split: user.rango_command_without_target("moveCurrentTabToNewWindow")
 
@@ -48,19 +53,64 @@ show <user.rango_target>:
 
 # Scroll
 upper: user.rango_command_without_target("scrollUpPage")
+upper <number>: user.rango_command_without_target("scrollUpPage", number)
+upper all: user.rango_command_without_target("scrollUpPage", 9999)
 tiny up: user.rango_command_without_target("scrollUpPage", 0.2)
+
 downer: user.rango_command_without_target("scrollDownPage")
+downer <number>: user.rango_command_without_target("scrollDownPage", number)
+downer all: user.rango_command_without_target("scrollDownPage", 9999)
 tiny down: user.rango_command_without_target("scrollDownPage", 0.2)
+
+scroll left: user.rango_command_without_target("scrollLeftPage")
+scroll left all: user.rango_command_without_target("scrollLeftPage", 9999)
+tiny left: user.rango_command_without_target("scrollLeftPage", 0.2)
+
+scroll right: user.rango_command_without_target("scrollRightPage")
+scroll right all: user.rango_command_without_target("scrollRightPage", 9999)
+tiny right: user.rango_command_without_target("scrollRightPage", 0.2)
+
+# Scroll the left or right asides
+upper left: user.rango_command_without_target("scrollUpLeftAside")
+upper left all: user.rango_command_without_target("scrollUpLeftAside", 9999)
+
+downer left: user.rango_command_without_target("scrollDownLeftAside")
+downer left all: user.rango_command_without_target("scrollDownLeftAside", 9999)
+
+upper right: user.rango_command_without_target("scrollUpRightAside")
+upper right all: user.rango_command_without_target("scrollUpRightAside", 9999)
+
+downer right: user.rango_command_without_target("scrollDownRightAside")
+downer right all: user.rango_command_without_target("scrollDownRightAside", 9999)
+
+# Scroll the scrolling container that contains the target
 upper <user.rango_target>:
   user.rango_command_with_target("scrollUpAtElement", rango_target)
 tiny up <user.rango_target>:
   user.rango_command_with_target("scrollUpAtElement", rango_target, 0.2)
+
 downer <user.rango_target>:
   user.rango_command_with_target("scrollDownAtElement", rango_target)
 tiny down <user.rango_target>:
   user.rango_command_with_target("scrollDownAtElement", rango_target, 0.2)
+
+scroll left <user.rango_target>:
+  user.rango_command_with_target("scrollLeftAtElement", rango_target)
+tiny left <user.rango_target>:
+  user.rango_command_with_target("scrollLeftAtElement", rango_target, 0.1)
+
+scroll right <user.rango_target>:
+  user.rango_command_with_target("scrollRightAtElement", rango_target)
+tiny right <user.rango_target>:
+  user.rango_command_with_target("scrollRightAtElement", rango_target, 0.1)
+
+# Repeat previous scroll
 up again: user.rango_command_without_target("scrollUpAtElement")
 down again: user.rango_command_without_target("scrollDownAtElement")
+left again: user.rango_command_without_target("scrollLeftAtElement")
+right again: user.rango_command_without_target("scrollRightAtElement")
+
+# Snap scroll
 crown <user.rango_target>:
   user.rango_command_with_target("scrollElementToTop", rango_target)
 bottom <user.rango_target>:
@@ -75,6 +125,36 @@ copy mark <user.rango_target>:
   user.rango_command_with_target("copyMarkdownLink", rango_target)
 copy text <user.rango_target>:
   user.rango_command_with_target("copyElementTextContent", rango_target)
+
+# Paste
+paste to <user.rango_target>:
+  user.rango_command_with_target("insertToField", rango_target, clip.text())
+
+# Insert text to field
+insert <user.text> to <user.rango_target>:
+  user.rango_command_with_target("clickElement", rango_target)
+  sleep(200ms)
+  edit.select_all()
+  edit.delete()
+  insert(text)
+enter <user.text> to <user.rango_target>:
+  user.rango_command_with_target("clickElement", rango_target)
+  sleep(200ms)
+  edit.select_all()
+  edit.delete()
+  insert(text)
+  sleep(200ms)
+  key(enter)
+
+# Cursor position
+pre <user.rango_target>:
+  user.rango_command_with_target("setSelectionBefore", rango_target)
+post <user.rango_target>:
+  user.rango_command_with_target("setSelectionAfter", rango_target)
+
+# Clear field
+change <user.rango_target>:
+  user.rango_command_with_target("focusAndDeleteContents", rango_target)
 
 # Copy current url information
 copy page {user.rango_page_location_property}:
@@ -93,6 +173,17 @@ hint weight {user.rango_hint_weights}:
 # Exclude or include single letter hints
 hint exclude singles: user.rango_command_without_target("excludeSingleLetterHints")
 hint include singles: user.rango_command_without_target("includeSingleLetterHints")
+
+# Extra hints
+hint extra: user.rango_command_without_target("displayExtraHints")
+hint more: user.rango_command_without_target("displayExcludedHints")
+hint less: user.rango_command_without_target("displayLessHints")
+include <user.rango_target>: user.rango_command_with_target("includeExtraSelectors", rango_target)
+exclude <user.rango_target>: user.rango_command_with_target("excludeExtraSelectors", rango_target)
+some more: user.rango_command_without_target("includeOrExcludeMoreSelectors")
+some less: user.rango_command_without_target("includeOrExcludeLessSelectors")
+custom hints save: user.rango_command_without_target("confirmSelectorsCustomization")
+custom hints reset: user.rango_command_without_target("resetCustomSelectors")
 
 # Show and hide hints
 hints refresh: user.rango_command_without_target("refreshHints")

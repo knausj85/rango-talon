@@ -63,20 +63,14 @@ def rango_hint(m) -> str:
 
 
 @mod.capture(rule="<user.rango_hint> (and <user.rango_hint>)*")
-def rango_hints(m) -> list:
+def rango_target(m) -> list[str]:
     return m.rango_hint_list
 
 
-@mod.capture(rule="<user.rango_hints>")
-def rango_target(m) -> list[str]:
-    return m.rango_hints
-
-
-RANGO_COMMAND_TIMEOUT_SECONDS = 3.0
 MINIMUM_SLEEP_TIME_SECONDS = 0.0005
 
 
-def read_json_response_with_timeout() -> Any:
+def read_json_response_with_timeout(timeout_seconds) -> Any:
     """Repeatedly tries to read a json object from the clipboard, waiting
     until the message type is "response"
 
@@ -86,7 +80,7 @@ def read_json_response_with_timeout() -> Any:
     Returns:
         Any: The json-decoded contents of the file
     """
-    timeout_time = time.perf_counter() + RANGO_COMMAND_TIMEOUT_SECONDS
+    timeout_time = time.perf_counter() + timeout_seconds
     sleep_time = MINIMUM_SLEEP_TIME_SECONDS
     message = None
     initial_raw_text = clip.text()
@@ -121,17 +115,14 @@ def read_json_response_with_timeout() -> Any:
     return message
 
 
-def send_request_and_wait_for_response(action: dict):
+def send_request_and_wait_for_response(action: dict, timeout_seconds: float = 3.0):
     message = {"version": 1, "type": "request", "action": action}
     json_message = json.dumps(message)
     response = None
     with clip.revert():
         clip.set_text(json_message)
-        if app.platform == "mac":
-            actions.key("ctrl-shift-3")
-        else:
-            actions.key("ctrl-shift-insert")
-        response = read_json_response_with_timeout()
+        actions.user.rango_type_hotkey()
+        response = read_json_response_with_timeout(timeout_seconds)
 
     if response["action"]["type"] == "copyToClipboard":
         actions.clip.set_text(response["action"]["textToCopy"])
@@ -139,9 +130,21 @@ def send_request_and_wait_for_response(action: dict):
     if response["action"]["type"] == "noHintFound" and len(action["target"]) == 1:
         actions.insert(action["target"][0])
 
+    if response["action"]["type"] == "key" and len(action["target"]) == 1:
+        actions.key(response["action"]["key"])
+
+    if response["action"]["type"] == "editDelete":
+        actions.edit.delete()
+
+    if response["action"]["type"] == "editDeleteAfterDelay":
+        actions.sleep("150ms")
+        actions.edit.delete()
 
 @mod.action_class
 class Actions:
+    def rango_type_hotkey():
+        """Presses the rango hotkey to read the command from the clipboard"""
+
     def rango_command_with_target(
         actionType: str,
         target: Union[str, list[str]],
@@ -154,6 +157,11 @@ class Actions:
     ):
         """Executes a Rango command without a target"""
 
+    def rango_command_without_target_short_timeout(
+        actionType: str, arg: Union[str, float, None] = None
+    ):
+        """Executes a Rango command without a target with a short timeout"""
+
     def rango_enable_direct_clicking():
         """Enables rango direct mode so that the user doesn't have to say 'click' before the hint letters"""
 
@@ -163,11 +171,16 @@ class Actions:
 
 @ctx.action_class("user")
 class UserActions:
+    def rango_type_hotkey():
+        actions.key("ctrl-shift-insert")
+
     def rango_command_with_target(
         actionType: str,
         target: Union[str, list[str]],
         arg: Union[str, float, None] = None,
     ):
+        if isinstance(target, str):
+            target = [target]
         action = {"type": actionType, "target": target}
         if arg:
             action["arg"] = arg
@@ -176,11 +189,18 @@ class UserActions:
     def rango_command_without_target(
         actionType: str, arg: Union[str, float, None] = None
     ):
-
         action = {"type": actionType}
         if arg:
             action["arg"] = arg
         send_request_and_wait_for_response(action)
+
+    def rango_command_without_target_short_timeout(
+        actionType: str, arg: Union[str, float, None] = None
+    ):
+        action = {"type": actionType}
+        if arg:
+            action["arg"] = arg
+        return send_request_and_wait_for_response(action, 0.3)
 
     def rango_enable_direct_clicking():
         ctx.tags = ["user.rango_direct_clicking"]
