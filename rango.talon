@@ -31,9 +31,8 @@ tab split: user.rango_command_without_target("moveCurrentTabToNewWindow")
 tab back: user.rango_command_without_target("focusPreviousTab")
 
 # Close tabs
-tab close other: user.rango_command_without_target("closeOtherTabsInWindow")
-tab close left: user.rango_command_without_target("closeTabsToTheLeftInWindow")
-tab close right: user.rango_command_without_target("closeTabsToTheRightInWindow")
+tab close other: user.tab_close_others()
+tab close right: user.tab_close_right()
 tab close first [<number_small>]:
   user.rango_command_without_target("closeTabsLeftEndInWindow", number_small or 1)
 tab close final [<number_small>]:

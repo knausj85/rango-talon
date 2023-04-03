@@ -232,3 +232,12 @@ class UserActions:
 
     def rango_disable_direct_clicking():
         ctx.tags = []
+
+    def tab_close_others():
+        actions.user.rango_command_without_target("closeOtherTabsInWindow")
+        
+    def tab_close_right():
+        actions.user.rango_command_without_target("closeTabsToTheRightInWindow")
+
+    def tab_close_left():
+        actions.user.rango_command_without_target("closeTabsToTheLeftInWindow")
