@@ -4,6 +4,7 @@ and not tag: user.fluent_search_screen_search
 -
 settings():
   user.rango_start_with_direct_clicking = 1
+  user.rango_exclude_singles = 0
 
 # Click
 touch <user.rango_target>:
@@ -173,10 +174,6 @@ copy mark address:
 # Modify hints appearance
 hint bigger: user.rango_command_without_target("increaseHintSize")
 hint smaller: user.rango_command_without_target("decreaseHintSize")
-hint {user.rango_hint_styles}: 
-  user.rango_command_without_target("setHintStyle", user.rango_hint_styles)
-hint weight {user.rango_hint_weights}:
-  user.rango_command_without_target("setHintWeight", user.rango_hint_weights)
 
 # Exclude or include single letter hints
 hint exclude singles: user.rango_command_without_target("excludeSingleLetterHints")
@@ -195,16 +192,18 @@ custom hints reset: user.rango_command_without_target("resetCustomSelectors")
 
 # Show and hide hints
 hints refresh: user.rango_command_without_target("refreshHints")
-hints toggle: user.rango_command_without_target("toggleHints")
+hints (toggle | switch): user.rango_command_without_target("toggleHints")
 hints on [{user.rango_hints_toggle_levels}]: 
   user.rango_command_without_target("enableHints", rango_hints_toggle_levels or "global")
 hints off [{user.rango_hints_toggle_levels}]: 
   user.rango_command_without_target("disableHints", rango_hints_toggle_levels or "global")
 hints reset {user.rango_hints_toggle_levels}: 
   user.rango_command_without_target("resetToggleLevel", rango_hints_toggle_levels)
+toggle show:
+  user.rango_command_without_target("displayTogglesStatus")
 
 # Toggle keyboard clicking
-keyboard toggle: user.rango_command_without_target("toggleKeyboardClicking")
+keyboard (toggle | switch): user.rango_command_without_target("toggleKeyboardClicking")
 
 # Enable or disable showing the url in the title
 address in title on: user.rango_command_without_target("enableUrlInTitle")
@@ -213,3 +212,9 @@ address in title off: user.rango_command_without_target("disableUrlInTitle")
 # Switch modes
 rango explicit:  user.rango_disable_direct_clicking()
 rango direct:  user.rango_enable_direct_clicking()
+
+# Setting page
+rango settings: user.rango_command_without_target("openSettingsPage")
+
+# Pages
+rango open {user.rango_page}: user.rango_command_without_target("openPageInNewTab", rango_page)
