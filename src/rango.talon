@@ -51,8 +51,6 @@ tab ahead: user.rango_command_without_target("cycleTabsByText", 1)
 tab behind: user.rango_command_without_target("cycleTabsByText", -1)
 
 # Close tabs
-tab close other: user.tab_close_others()
-tab close right: user.tab_close_right()
 tab close first [<number_small>]:
   user.rango_command_without_target("closeTabsLeftEndInWindow", number_small or 1)
 tab close final [<number_small>]:

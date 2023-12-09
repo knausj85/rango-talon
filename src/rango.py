@@ -3,7 +3,9 @@ from typing import Union
 
 mod = Module()
 ctx = Context()
-
+ctx.matches = r"""
+tag: browser
+"""
 
 @mod.capture(rule="<user.letter> (twice | second)")
 def rango_hint_double(m) -> str:
@@ -74,3 +76,20 @@ class Actions:
     def rango_force_direct_clicking():
         """Forces Rango direct clicking"""
         ctx.tags = ["user.rango_direct_clicking_forced"]
+    
+
+@ctx.action_class("user")
+class UserActions:
+    def tab_close_others():
+        """Closes all other tabs"""
+        actions.user.rango_command_without_target("closeOtherTabsInWindow")
+    
+    def tab_close_right():
+        """Closes all tabs to the right"""
+        actions.user.rango_command_without_target("closeTabsToTheRightInWindow")
+
+    def tab_close_left():
+        """ closes taps to the left"""
+        actions.user.rango_command_without_target("closeTabsToTheLeftInWindow")
+        
+    
