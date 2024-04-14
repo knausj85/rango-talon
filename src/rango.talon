@@ -3,6 +3,7 @@ and not tag: user.homerow_search
 and not tag: user.fluent_search_screen_search
 -
 tag(): user.rango_direct_clicking
+tag(): user.rango_number_hints
 
 # Click
 touch <user.rango_target>:
