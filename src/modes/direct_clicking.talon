@@ -7,4 +7,4 @@ tag: browser
 and tag: user.rango_direct_clicking_forced
 -
 
-^<user.rango_target>$: user.rango_command_with_target("directClickElement", rango_target)
+go <user.rango_target>: user.rango_command_with_target("directClickElement", rango_target)
