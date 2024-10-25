@@ -9,4 +9,4 @@ app: safari
 @ctx.action_class("user")
 class UserActions:
     def rango_type_hotkey():
-        actions.key("ctrl-shift-3")
+        actions.key("ctrl-shift-keypad_3")
