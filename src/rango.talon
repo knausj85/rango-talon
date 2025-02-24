@@ -2,6 +2,7 @@ tag: browser
 and not tag: user.rango_disabled
 -
 tag(): user.rango_direct_clicking
+tag(): user.rango_number_hints
 
 # Click
 click <user.rango_target>:
@@ -50,9 +51,6 @@ tab ahead: user.rango_command_without_target("cycleTabsByText", 1)
 tab behind: user.rango_command_without_target("cycleTabsByText", -1)
 
 # Close tabs
-tab close other: user.rango_command_without_target("closeOtherTabsInWindow")
-tab close left: user.rango_command_without_target("closeTabsToTheLeftInWindow")
-tab close right: user.rango_command_without_target("closeTabsToTheRightInWindow")
 tab close first [<number_small>]:
   user.rango_command_without_target("closeTabsLeftEndInWindow", number_small or 1)
 tab close final [<number_small>]:
