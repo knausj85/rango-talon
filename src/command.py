@@ -1,36 +1,19 @@
-from talon import Module, actions
-from typing import Union
+from .command_server import send_request_and_wait
+from .response import handle_response
+from .versions import COMMAND_VERSION
 
-mod = Module()
+
+def run_targeted_command(action_name: str, target: dict, **kwargs):
+    """Sends a targeted command to the browser extension"""
+    action = {"name": action_name, "target": target, **kwargs}
+    command = {"version": COMMAND_VERSION, "type": "request", "action": action}
+    response = send_request_and_wait(command)
+    return handle_response(response, action)
 
 
-@mod.action_class
-class Actions:
-    def rango_command_with_target(
-        actionType: str,
-        target: Union[str, list[str]],
-        arg: Union[str, float, None] = None,
-    ):
-        """Executes a Rango command with target"""
-        if isinstance(target, str):
-            target = [target]
-        action = {"type": actionType, "target": target}
-        if arg:
-            action["arg"] = arg
-        return actions.user.rango_run_command(action)
-
-    def rango_command_without_target(
-        actionType: str,
-        arg: Union[str, float, None] = None,
-        arg2: Union[str, None] = None,
-        arg3: Union[bool, None] = None,
-    ):
-        """Executes a Rango command without a target"""
-        action = {"type": actionType}
-        if arg:
-            action["arg"] = arg
-        if arg2:
-            action["arg2"] = arg2
-        if arg3:
-            action["arg3"] = arg3
-        return actions.user.rango_run_command(action)
+def run_simple_command(action_name: str, **kwargs):
+    """Sends a command without a target to the browser extension"""
+    action = {"name": action_name, **kwargs}
+    command = {"version": COMMAND_VERSION, "type": "request", "action": action}
+    response = send_request_and_wait(command)
+    return handle_response(response, action)
