@@ -28,3 +28,6 @@ class BrowserActions:
 class UserActions:
     def tab_duplicate():
         run_simple_command("cloneCurrentTab")
+    
+    def tab_close_others():
+        actions.user.rango_close_other_tabs()
